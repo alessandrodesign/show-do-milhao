@@ -44,6 +44,7 @@
         "howler": "^2.2.4",
         "jquery": "^3.7.1",
         "jszip": "^3.10.1",
-        "pdfmake": "^0.2.20"
+        "pdfmake": "^0.2.20",
+        "tsparticles": "^3.9.1"
     }
 }

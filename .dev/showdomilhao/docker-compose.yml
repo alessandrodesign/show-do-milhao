@@ -1,0 +1,72 @@
+services:
+  app:
+    build: .
+    container_name: showdomilhao_app
+    volumes:
+      - ../../www:/var/www/html
+      - ../../www/public:/var/www/html/public
+    command: sh -c "git config --global --add safe.directory /var/www/html && php-fpm"
+    ports:
+      - "8080:80"
+    environment:
+      - TZ=America/Belem
+      - DB_HOST=db
+      - DB_NAME=showdomilhao
+      - DB_USER=showdomilhao
+      - DB_PASS=showdomilhao
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - showdomilhao_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: showdomilhao_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ../../www/public:/var/www/html/public
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - showdomilhao_net
+
+  db:
+    image: mariadb:11.8.2
+    container_name: showdomilhao_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: showdomilhao
+      MYSQL_USER: showdomilhao
+      MYSQL_PASSWORD: showdomilhao
+    ports:
+      - "3306:3306"
+    volumes:
+      - showdomilhao_db_data:/var/lib/mysql
+    networks:
+      - showdomilhao_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: showdomilhao_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - showdomilhao_redis_data:/data
+#    command: redis-server --appendonly yes --requirepass "redis123"
+    networks:
+      - showdomilhao_net
+
+volumes:
+  showdomilhao_db_data:
+  showdomilhao_redis_data:
+
+networks:
+  showdomilhao_net:
+    driver: bridge

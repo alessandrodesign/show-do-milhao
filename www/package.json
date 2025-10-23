@@ -11,9 +11,10 @@
         "format": "prettier --write 'resources/js/**/*.{js,ts,tsx,css,scss,md,json}'"
     },
     "devDependencies": {
-        "@types/react-dom": "^19.2.2",
         "@tailwindcss/vite": "^4.0.0",
+        "@types/howler": "^2.2.12",
         "@types/react": "^19.2.2",
+        "@types/react-dom": "^19.2.2",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
         "@typescript-eslint/parser": "^8.46.2",
         "@vitejs/plugin-react": "^5.0.4",
@@ -38,8 +39,12 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@popperjs/core": "^2.11.8",
         "axios": "^1.12.2",
+        "bootstrap": "^5.3.8",
+        "howler": "^2.2.4",
         "react": "^19.2.0",
-        "react-dom": "^19.2.0"
+        "react-dom": "^19.2.0",
+        "react-router-dom": "^7.9.4"
     }
 }

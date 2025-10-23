@@ -13,6 +13,7 @@ class AdminGuard
         if (!$request->user() || !$request->user()->is_admin) {
             return redirect('/'); // or abort(403)
         }
+
         return $next($request);
     }
 }

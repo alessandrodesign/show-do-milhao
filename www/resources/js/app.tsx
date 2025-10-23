@@ -1,10 +1,22 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client';
-import App from './pages/App';
-import 'bootstrap';
+import AppRoutes from './routes/routes';
+import {AuthProvider} from './context/AuthContext';
+import {GameProvider} from "./context/GameContext";
+import {RankingProvider} from "./context/RankingContext";
 
 const container = document.getElementById('app');
 if (container) {
     const root = createRoot(container);
-    root.render(<App/>);
+    root.render(
+        <React.StrictMode>
+            <AuthProvider>
+                <GameProvider>
+                    <RankingProvider>
+                        <AppRoutes/>
+                    </RankingProvider>
+                </GameProvider>
+            </AuthProvider>
+        </React.StrictMode>
+    );
 }

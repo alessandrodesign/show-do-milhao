@@ -138,7 +138,7 @@ return (new Config())
         'self_accessor' => true,
         'short_scalar_cast' => true,
         'single_blank_line_at_eof' => true,
-        'single_blank_line_before_namespace' => true,
+        'blank_lines_before_namespace' => true,
         'single_class_element_per_statement' => true,
         'single_import_per_statement' => true,
         'single_line_after_imports' => true,
@@ -157,7 +157,7 @@ return (new Config())
         'whitespace_after_comma_in_array' => true,
 
         // Laravel Specific
-        'not_operator_with_space_successor' => false,
+        'not_operator_with_space' => false,
         'echo_tag_syntax' => ['format' => 'long'],
         'no_useless_else' => true,
         'php_unit_method_casing' => ['case' => 'camel_case'],

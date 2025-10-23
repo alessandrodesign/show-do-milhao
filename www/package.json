@@ -1,17 +1,22 @@
 {
+    "name": "show-do-milhao",
+    "version": "1.0.0",
     "$schema": "https://json.schemastore.org/package.json",
     "private": true,
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "lint": "eslint 'resources/js/**/*.{js,ts,tsx}'",
+        "format": "prettier --write 'resources/js/**/*.{js,ts,tsx,css,scss,md,json}'"
     },
     "devDependencies": {
+        "@types/react-dom": "^19.2.2",
         "@tailwindcss/vite": "^4.0.0",
+        "@types/react": "^19.2.2",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
         "@typescript-eslint/parser": "^8.46.2",
         "@vitejs/plugin-react": "^5.0.4",
-        "axios": "^1.12.2",
         "concurrently": "^9.0.1",
         "eslint": "^9.38.0",
         "eslint-config-prettier": "^10.1.8",
@@ -24,8 +29,6 @@
         "typescript": "^5.9.3",
         "vite": "^7.1.12"
     },
-    "name": "www",
-    "version": "1.0.0",
     "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p>",
     "main": "vite.config.js",
     "directories": {
@@ -35,6 +38,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "axios": "^1.12.2",
         "react": "^19.2.0",
         "react-dom": "^19.2.0"
     }

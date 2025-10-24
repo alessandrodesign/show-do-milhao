@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DifficultyController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\{UserController, AuditController};
 
 Route::prefix('v1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
@@ -25,5 +26,10 @@ Route::prefix('v1')->group(function () {
         Route::get('ranking', [GameController::class, 'ranking']);
         Route::post('help/universitarios', [GameController::class, 'helpUniversitarios']);
         Route::get('{gameId}/stats', [GameController::class, 'stats']);
+    });
+
+    Route::middleware(['auth:sanctum','admin.guard'])->prefix('admin')->group(function(){
+        Route::apiResource('users', UserController::class);
+        Route::get('logs', [AuditController::class,'index']);
     });
 });

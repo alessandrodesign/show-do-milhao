@@ -7,6 +7,7 @@ use App\Models\Alternative;
 use App\Models\Game;
 use App\Models\GameScore;
 use App\Models\Question;
+use App\Traits\LogsActions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 

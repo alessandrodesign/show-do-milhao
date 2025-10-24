@@ -29,6 +29,7 @@ export function useGame() {
 
     async function fetchQuestion() {
         const {data} = await api.post('/game/question', {
+            game_id: game.gameId,
             current_index: game.currentIndex,
             category_ids: game.categoryIds,
             mode: game.mode,

@@ -7,6 +7,7 @@ const api: AxiosInstance = axios.create({
         Accept: 'application/json',
     },
     withCredentials: true, // permite cookies se usar Sanctum futuramente
+    withXSRFToken: true,
 });
 
 // interceptors para logging e tratamento global de erros

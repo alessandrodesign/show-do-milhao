@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const login = async (email: string, password: string) => {
         try {
+            await api.get('/sanctum/csrf-cookie'); // necessário para Sanctum
             const res = await api.post('/login', { email, password });
             setUser(res.data.user);
             return true;

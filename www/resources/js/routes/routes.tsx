@@ -10,6 +10,8 @@ import GameStart from '../pages/game/GameStart';
 import Ranking from '../pages/game/Ranking';
 import AdminQuestionForm from '../pages/admin/AdminQuestionForm';
 import Stats from '../pages/game/Stats';
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
 
 function PrivateRoute({children}: { children: JSX.Element }) {
     const {user, loading} = useAuth();
@@ -24,6 +26,8 @@ export default function AppRoutes() {
             <Routes>
                 <Route element={<PublicLayout/>}>
                     <Route path="/" element={<Home/>}/>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/game/start" element={<GameStart/>}/>
                     <Route path="/game/play" element={<GamePlay/>}/>
                     <Route path="/game/ranking" element={<Ranking/>}/>

@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.guard' => \App\Http\Middleware\AdminGuard::class,
             'throttle.game' => \App\Http\Middleware\ThrottleGameRequests::class,
         ]);
+        $middleware->statefulApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

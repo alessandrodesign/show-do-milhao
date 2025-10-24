@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin.guard' => \App\Http\Middleware\AdminGuard::class,
+            'throttle.game' => \App\Http\Middleware\ThrottleGameRequests::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 export type Mode = 'fixed' | 'progressive';
 
 export interface GameState {
+    gameId?: number | null;
     playerName: string;
     categoryIds: number[];
     mode: Mode;
@@ -20,6 +21,7 @@ export interface GameState {
 }
 
 const defaultState: GameState = {
+    gameId: null,
     playerName: '',
     categoryIds: [],
     mode: 'progressive',

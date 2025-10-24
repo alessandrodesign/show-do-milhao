@@ -42,6 +42,7 @@
         "@popperjs/core": "^2.11.8",
         "axios": "^1.12.2",
         "bootstrap": "^5.3.8",
+        "framer-motion": "^12.23.24",
         "howler": "^2.2.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",

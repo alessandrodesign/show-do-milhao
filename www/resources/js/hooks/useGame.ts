@@ -14,6 +14,7 @@ export function useGame() {
 
         setGame((g) => ({
             ...g,
+            gameId: data.game_id,
             playerName: data.player_name,
             categoryIds: data.category_ids,
             mode: data.mode,
@@ -40,10 +41,14 @@ export function useGame() {
         };
     }
 
-    async function checkAnswer(questionId: number, alternativeId: number) {
+    async function checkAnswer(questionId: number, alternativeId: number, index: number, responseMs: number) {
         const {data} = await api.post('/game/answer', {
+            game_id: game.gameId,
             question_id: questionId,
             alternative_id: alternativeId,
+            index,
+            response_ms: responseMs,
+            total_questions: game.totalQuestions,
         });
         return data as { correct: boolean };
     }

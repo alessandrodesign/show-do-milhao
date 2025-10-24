@@ -9,6 +9,7 @@ import GamePlay from '../pages/game/GamePlay';
 import GameStart from '../pages/game/GameStart';
 import Ranking from '../pages/game/Ranking';
 import AdminQuestionForm from '../pages/admin/AdminQuestionForm';
+import Stats from '../pages/game/Stats';
 
 function PrivateRoute({children}: { children: JSX.Element }) {
     const {user, loading} = useAuth();
@@ -26,6 +27,7 @@ export default function AppRoutes() {
                     <Route path="/game/start" element={<GameStart/>}/>
                     <Route path="/game/play" element={<GamePlay/>}/>
                     <Route path="/game/ranking" element={<Ranking/>}/>
+                    <Route path="/game/stats/:id" element={<Stats />} />
                 </Route>
 
                 <Route

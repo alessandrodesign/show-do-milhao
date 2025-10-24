@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Howl} from 'howler';
 import {useGame} from '../../hooks/useGame';
 import {useNavigate} from 'react-router-dom';
@@ -8,6 +8,7 @@ import PlayerOptions from '../../components/PlayerOptions';
 import ModalAudience from '../../components/ModalAudience';
 import Loader from '../../components/Loader';
 import PlayerHelps from '../../components/PlayerHelps';
+import {motion} from 'framer-motion';
 
 const sndSuspense = new Howl({src: ['/sounds/suspense.mp3']});
 const sndCorrect = new Howl({src: ['/sounds/correct.mp3']});
@@ -26,6 +27,7 @@ interface LoadedQuestion {
 }
 
 export default function GamePlay() {
+    const tStart = useRef<number | null>(null);
     const {game, fetchQuestion, checkAnswer, advance, registerAsked, resetGame} = useGame();
     const [q, setQ] = useState<LoadedQuestion | null>(null);
     const [pickedAlt, setPickedAlt] = useState<number | null>(null);
@@ -55,6 +57,7 @@ export default function GamePlay() {
         const data = await fetchQuestion();
         setQ(data.question);
         registerAsked(data.question.id);
+        tStart.current = performance.now();
     }
 
     async function onAsk() {
@@ -68,23 +71,30 @@ export default function GamePlay() {
         setModal(false);
         if (!q || pickedAlt === null) return;
 
-        const res = await checkAnswer(q.id, pickedAlt);
+        const elapsed = tStart.current ? Math.max(0, Math.round(performance.now() - tStart.current)) : 0;
+
+        const res = await checkAnswer(q.id, pickedAlt, game.currentIndex, elapsed);
         setRevealResult(res.correct);
 
         if (res.correct) {
             sndCorrect.play();
-            // avança para próxima após pequeno delay
+            const isLast = (game.currentIndex + 1) >= game.totalQuestions;
             setTimeout(() => {
-                advance(true);
+                if (isLast) {
+                    alert(`Parabéns! Você venceu com R$ ${(game.score + (game.prizes[game.currentIndex] ?? 0)).toLocaleString('pt-BR')}`);
+                    setTimeout(() => {
+                        navigate(`/game/stats/${game.gameId}`);
+                    }, 200);
+                } else {
+                    advance(true);
+                }
             }, 1000);
         } else {
             sndWrong.play();
-            // fim de jogo após pequeno delay
             setTimeout(() => {
                 alert(`Errou! Você terminou com R$ ${game.score.toLocaleString('pt-BR')}`);
-                resetGame();
-                navigate('/game/start');
-            }, 1200);
+                navigate(`/game/stats/${game.gameId}`);
+            }, 900);
         }
     }
 
@@ -97,7 +107,7 @@ export default function GamePlay() {
                     onFifty={(letters) => {
                         // remove visuais de 2 alternativas erradas
                         const reduced = q?.alternatives.filter(a => !letters.includes(a.letter)) ?? [];
-                        setQ(q => q ? { ...q, alternatives: reduced } : q);
+                        setQ(q => q ? {...q, alternatives: reduced} : q);
                     }}
                 />
                 <div className="bg-green-50 border border-green-200 p-6 rounded">
@@ -148,26 +158,23 @@ export default function GamePlay() {
                         />
 
                         <div className="grid gap-3">
-                            {q.alternatives.map((a) => {
+                            {q.alternatives.map((a, idx) => {
                                 const isPicked = pickedAlt === a.id;
-                                let cls =
-                                    'border rounded p-3 text-left cursor-pointer flex justify-between items-center';
-                                if (isPicked) cls += ' border-blue-600 ring-2 ring-blue-300';
                                 return (
-                                    <button
+                                    <motion.button
                                         key={a.id}
-                                        data-letter={a.letter}
+                                        initial={{opacity: 0, y: 10}}
+                                        animate={{opacity: 1, y: 0}}
+                                        transition={{delay: idx * 0.05}}
                                         onClick={() => {
                                             setPickedAlt(a.id);
                                             setShowAskBtn(true);
                                             setRevealResult(null);
                                         }}
-                                        className={cls}
+                                        className={`border rounded p-3 text-left cursor-pointer ${isPicked ? 'border-blue-600 ring-2 ring-blue-300' : ''}`}
                                     >
-                  <span>
-                    <span className="font-bold mr-2">{a.letter})</span> {a.text}
-                  </span>
-                                    </button>
+                                        <span className="font-bold mr-2">{a.letter})</span> {a.text}
+                                    </motion.button>
                                 );
                             })}
                         </div>

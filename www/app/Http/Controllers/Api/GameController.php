@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
  */
 class GameController extends Controller
 {
+    use LogsActions;
+
     /**
      * Escada de prêmios padrão (10 perguntas)
      * @var int[]
@@ -45,6 +47,8 @@ class GameController extends Controller
             'player_name' => $data['player_name'],
             'score'       => 0,
         ]);
+
+        $this->logAction('game_start', 'Game', $game->id, $data);
 
         return response()->json([
             'game_id'         => $game->id,
@@ -114,10 +118,12 @@ class GameController extends Controller
     public function answer(Request $request)
     {
         $data = $request->validate([
-            'game_id'        => 'required|exists:games,id',
-            'question_id'    => 'required|exists:questions,id',
-            'alternative_id' => 'required|exists:alternatives,id',
-            'index'          => 'required|integer|min:0',
+            'game_id'         => 'required|exists:games,id',
+            'question_id'     => 'required|exists:questions,id',
+            'alternative_id'  => 'required|exists:alternatives,id',
+            'index'           => 'required|integer|min:0',
+            'response_ms'     => 'nullable|integer|min:0',
+            'total_questions' => 'required|integer|min:1|max:100',
         ]);
 
         $isCorrect = Alternative::where('id', $data['alternative_id'])
@@ -130,14 +136,27 @@ class GameController extends Controller
                 'game_id'     => $data['game_id'],
                 'question_id' => $data['question_id'],
                 'correct'     => $isCorrect,
+                'response_ms' => $data['response_ms'] ?? null,
             ]);
 
             if ($isCorrect) {
                 $prize = $this->prizeLadder[$data['index']] ?? 0;
                 Game::where('id', $data['game_id'])->increment('score', $prize);
+
+                // vitória: se acertou a última questão, encerra o jogo
+                if (($data['index'] + 1) >= $data['total_questions']) {
+                    Game::where('id', $data['game_id'])->update(['ended_at' => now()]);
+                }
             } else {
+                // errou: encerra imediatamente
                 Game::where('id', $data['game_id'])->update(['ended_at' => now()]);
             }
+
+            $this->logAction('answer', 'GameScore', null, [
+                'game_id'     => $data['game_id'],
+                'question_id' => $data['question_id'],
+                'correct'     => $isCorrect,
+            ]);
         });
 
         return response()->json(['correct' => $isCorrect]);
@@ -205,5 +224,36 @@ class GameController extends Controller
         $map = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5];
 
         return $map[$index] ?? 5;
+    }
+
+    public function stats(Request $request, int $gameId)
+    {
+        $game = Game::find($gameId);
+        if (!$game) {
+            return response()->json(['message' => 'Partida não encontrada.'], 404);
+        }
+
+        $rows    = GameScore::where('game_id', $gameId)->get(['correct', 'response_ms']);
+        $total   = $rows->count();
+        $correct = $rows->where('correct', true)->count();
+        $wrong   = $total - $correct;
+
+        $avgMs   = (int) round($rows->whereNotNull('response_ms')->avg('response_ms') ?? 0);
+        $bestMs  = (int) ($rows->whereNotNull('response_ms')->min('response_ms') ?? 0);
+        $worstMs = (int) ($rows->whereNotNull('response_ms')->max('response_ms') ?? 0);
+
+        return response()->json([
+            'game_id'                  => $gameId,
+            'player_name'              => $game->player_name,
+            'score'                    => $game->score,
+            'ended_at'                 => $game->ended_at,
+            'total_questions_answered' => $total,
+            'correct'                  => $correct,
+            'wrong'                    => $wrong,
+            'accuracy'                 => $total ? round($correct * 100 / $total, 1) : 0,
+            'avg_response_ms'          => $avgMs,
+            'best_response_ms'         => $bestMs,
+            'worst_response_ms'        => $worstMs,
+        ]);
     }
 }

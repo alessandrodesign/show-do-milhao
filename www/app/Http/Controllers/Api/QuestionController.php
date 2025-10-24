@@ -11,11 +11,13 @@ use Throwable;
 
 class QuestionController extends Controller
 {
-    public function index()
+    public function index(Request $r)
     {
-        return Question::with(['category', 'difficulty', 'alternatives'])
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+        $term  = $r->query('q');
+        $query = Question::with(['category', 'difficulty'])
+            ->when($term, fn ($q) => $q->where('statement', 'like', "%{$term}%"));
+
+        return $query->orderByDesc('id')->paginate(10);
     }
 
     public function store(Request $request)

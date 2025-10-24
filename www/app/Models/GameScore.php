@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class GameScore extends Model
 {
-    protected $fillable = ['game_id', 'question_id', 'correct'];
+    protected $fillable = ['game_id', 'question_id', 'correct', 'response_ms'];
 
     public $timestamps = true;
 

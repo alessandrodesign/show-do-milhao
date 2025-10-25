@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+    :root {
+        --background: 220 40% 6%;
+        --foreground: 45 100% 98%;
+
+        --card: 220 35% 10%;
+        --card-foreground: 45 100% 98%;
+
+        --popover: 220 35% 12%;
+        --popover-foreground: 45 100% 98%;
+
+        --primary: 45 95% 55%;
+        --primary-foreground: 220 40% 10%;
+
+        --secondary: 210 100% 45%;
+        --secondary-foreground: 45 100% 98%;
+
+        --muted: 220 30% 20%;
+        --muted-foreground: 45 20% 70%;
+
+        --accent: 45 100% 60%;
+        --accent-foreground: 220 40% 10%;
+
+        --destructive: 0 85% 60%;
+        --destructive-foreground: 45 100% 98%;
+
+        --success: 142 76% 45%;
+        --success-foreground: 45 100% 98%;
+
+        --border: 220 30% 25%;
+        --input: 220 30% 20%;
+        --ring: 45 95% 55%;
+
+        --radius: 0.75rem;
+
+        /* Show do Milhão custom tokens */
+        --gold: 45 95% 55%;
+        --gold-light: 45 100% 70%;
+        --gold-dark: 45 90% 40%;
+
+        --blue-deep: 210 100% 45%;
+        --blue-light: 210 100% 60%;
+
+        --gradient-gold: linear-gradient(135deg, hsl(45 95% 55%) 0%, hsl(45 100% 70%) 100%);
+        --gradient-stage: linear-gradient(180deg, hsl(220 40% 6%) 0%, hsl(220 35% 10%) 50%, hsl(210 100% 10%) 100%);
+        --gradient-prize: linear-gradient(90deg, hsl(45 95% 55% / 0.1) 0%, hsl(45 95% 55% / 0.3) 50%, hsl(45 95% 55% / 0.1) 100%);
+
+        --shadow-gold: 0 0 30px hsl(45 95% 55% / 0.5);
+        --shadow-glow: 0 0 50px hsl(45 100% 70% / 0.3);
+    }
+}
+
+@layer base {
+    * {
+        border-color: hsl(var(--border));
+    }
+
+    body {
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+    }
+}

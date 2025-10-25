@@ -12,4 +12,9 @@ export default defineConfig({
         tailwindcss(),
         react(),
     ],
+    resolve: {
+        alias: {
+            '@': new URL('./resources/js', import.meta.url).pathname,
+        },
+    },
 });

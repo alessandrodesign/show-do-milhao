@@ -2,21 +2,20 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
+use App\Models\GameCategory;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
         $categories = [
-            'Natal do Amor', 'Ciências', 'História', 'Geografia',
-            'Entretenimento', 'Esportes', 'Conhecimentos Gerais',
+            'Natal do Amor',
+            'Reveilon do Amor',
         ];
 
         foreach ($categories as $name) {
-            Category::firstOrCreate(['name' => $name], ['slug' => Str::slug($name)]);
+            GameCategory::firstOrCreate(['name' => $name], ['description' => $name]);
         }
     }
 }

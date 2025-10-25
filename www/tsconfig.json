@@ -1,4 +1,5 @@
 {
+    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
     "compilerOptions": {
         "target": "ES2020",
         "lib": [
@@ -16,7 +17,14 @@
         "noEmit": true,
         "isolatedModules": true,
         "baseUrl": "./",
-        "paths": {}
+        "paths": {
+            "@/*": ["./resources/js/*"]
+        },
+        "noImplicitAny": false,
+        "noUnusedParameters": false,
+        "allowJs": true,
+        "noUnusedLocals": false,
+        "strictNullChecks": false
     },
     "include": [
         "resources/js/**/*",

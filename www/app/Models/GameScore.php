@@ -2,20 +2,36 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Registro de cada resposta dada durante o jogo.
+ * GameScore - histórico e estatísticas de partidas.
  */
 class GameScore extends Model
 {
-    protected $fillable = ['game_id', 'question_id', 'correct', 'response_ms'];
+    use HasFactory;
 
-    public $timestamps = true;
+    protected $table = 'game_scores';
 
-    public function game(): BelongsTo
-    {
-        return $this->belongsTo(Game::class);
-    }
+    protected $fillable = [
+        'player_name',
+        'prize',
+        'total_correct',
+        'total_wrong',
+        'questions_total',
+        'lifelines_used',
+        'avg_response_time',
+        'duration_seconds',
+    ];
+
+    protected $casts = [
+        'prize' => 'float',
+        'total_correct' => 'integer',
+        'total_wrong' => 'integer',
+        'questions_total' => 'integer',
+        'lifelines_used' => 'integer',
+        'avg_response_time' => 'float',
+        'duration_seconds' => 'integer',
+    ];
 }

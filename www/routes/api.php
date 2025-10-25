@@ -1,35 +1,95 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\DifficultyController;
-use App\Http\Controllers\Api\GameController;
-use App\Http\Controllers\Api\QuestionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{UserController, AuditController};
+use App\Http\Controllers\Admin\{
+    GameCategoryController,
+    GameDifficultyController,
+    GameQuestionController
+};
+use App\Http\Controllers\{
+    GameController,
+    RankingController
+};
+use App\Http\Controllers\GameStatsController;
 
-Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
+/*
+|--------------------------------------------------------------------------
+| API Routes - Show do Milhão
+|--------------------------------------------------------------------------
+| Estrutura organizada para as rotas do jogo e do painel administrativo.
+| As rotas administrativas são protegidas via Sanctum.
+| As rotas do jogo e ranking são públicas.
+|--------------------------------------------------------------------------
+*/
 
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('difficulties', DifficultyController::class);
-    Route::apiResource('questions', QuestionController::class);
+/*
+|--------------------------------------------------------------------------
+| Painel Administrativo (protegido por Sanctum)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+    // 📁 Categorias
+    Route::get('categories', [GameCategoryController::class, 'index']);
+    Route::post('categories', [GameCategoryController::class, 'store']);
+    Route::get('categories/{gameCategory}', [GameCategoryController::class, 'show']);
+    Route::put('categories/{gameCategory}', [GameCategoryController::class, 'update']);
+    Route::delete('categories/{gameCategory}', [GameCategoryController::class, 'destroy']);
 
-    Route::middleware('throttle.game:20,1')->prefix('game')->group(function () {
-        Route::post('start', [GameController::class, 'start']);
-        Route::post('question', [GameController::class, 'question']);
-        Route::post('answer', [GameController::class, 'answer']);
-        Route::post('end', [GameController::class, 'end']);
-        Route::get('ranking', [GameController::class, 'ranking']);
-        Route::post('help/universitarios', [GameController::class, 'helpUniversitarios']);
-        Route::get('{gameId}/stats', [GameController::class, 'stats']);
-    });
+    // 🧩 Dificuldades
+    Route::get('difficulties', [GameDifficultyController::class, 'index']);
+    Route::post('difficulties', [GameDifficultyController::class, 'store']);
+    Route::get('difficulties/{gameDifficulty}', [GameDifficultyController::class, 'show']);
+    Route::put('difficulties/{gameDifficulty}', [GameDifficultyController::class, 'update']);
+    Route::delete('difficulties/{gameDifficulty}', [GameDifficultyController::class, 'destroy']);
 
-    Route::middleware(['auth:sanctum','admin.guard'])->prefix('admin')->group(function(){
-        Route::apiResource('users', UserController::class);
-        Route::get('logs', [AuditController::class,'index']);
-    });
+    // ❓ Perguntas e respostas
+    Route::get('questions', [GameQuestionController::class, 'index']);
+    Route::post('questions', [GameQuestionController::class, 'store']);
+    Route::get('questions/{gameQuestion}', [GameQuestionController::class, 'show']);
+    Route::put('questions/{gameQuestion}', [GameQuestionController::class, 'update']);
+    Route::delete('questions/{gameQuestion}', [GameQuestionController::class, 'destroy']);
 });
+
+/*
+|--------------------------------------------------------------------------
+| Rotas Públicas do Jogo (GameController)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('game')->group(function () {
+    // 🕹️ Lista categorias
+    Route::get('categories', [GameController::class, 'categories']);
+
+    // 🕹️ Iniciar uma nova partida
+    Route::post('start', [GameController::class, 'start']);
+
+    // 📊 Obter estado atual do jogo
+    Route::get('{game}/current', [GameController::class, 'current']);
+
+    // 🎯 Jogador seleciona resposta
+    Route::post('{game}/select-answer', [GameController::class, 'selectAnswer']);
+
+    // 🔍 Revelar resultado (acerto/erro)
+    Route::post('{game}/reveal', [GameController::class, 'reveal']);
+
+    // ⏭️ Continuar para próxima pergunta
+    Route::post('{game}/continue', [GameController::class, 'continue']);
+
+    // 🛑 Parar o jogo e levar prêmio atual
+    Route::post('{game}/stop', [GameController::class, 'stop']);
+
+    // 🆘 Ajudas (Lifelines)
+    Route::post('{game}/lifeline/{type}/confirm', [GameController::class, 'useLifeline']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Estatísticas e Rankings
+|--------------------------------------------------------------------------
+*/
+Route::prefix('stats')->group(function () {
+    Route::get('global', [GameStatsController::class, 'global']);
+    Route::get('player/{name}', [GameStatsController::class, 'player']);
+});
+
+Route::get('ranking/top', [RankingController::class, 'top']);
+Route::get('ranking/detailed', [RankingController::class, 'detailed']);
